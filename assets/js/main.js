@@ -10,12 +10,26 @@ window.addEventListener('load', () => {
     }
 
     noButton.addEventListener('mouseover', () => {
-        const maxHeight = window.innerHeight - noButton.getBoundingClientRect().height;
-        const maxWidth = window.innerWidth - noButton.getBoundingClientRect().width;
+        const buttonClientRect = noButton.getBoundingClientRect();
+
+        const top = buttonClientRect.top;
+        const left = buttonClientRect.left;
+        const height = buttonClientRect.height;
+        const width = buttonClientRect.width;
+
+        const maxHeight = window.innerHeight - height;
+        const maxWidth = window.innerWidth - width;
+
+        const randomTop = numberBetween(0, maxHeight);
+        const randomLeft = numberBetween(0, maxWidth);
+
+        // Prevent the next position from falling close to the current position.
+        const newTop = avoidSamePosition(randomTop, top, height * 2,  maxHeight);
+        const newLeft = avoidSamePosition(randomLeft, left, width * 2, maxWidth);
 
         noButton.style.position = 'absolute';
-        noButton.style.top = numberBetween(0, maxHeight) + 'px';
-        noButton.style.left = numberBetween(0, maxWidth)+ 'px';
+        noButton.style.top = newTop + 'px';
+        noButton.style.left = newLeft + 'px';
     });
 
 
@@ -27,4 +41,18 @@ window.addEventListener('load', () => {
             timer: 3000
           })
     });
+
+    const avoidSamePosition = (newPos, oldPos, range,limit) => {
+
+        if(Math.abs(newPos - oldPos) > range) {
+            return newPos;
+        }
+
+        if (newPos + range < limit) {
+            return newPos + range;
+        } else {
+            return newPos - range;
+        }
+
+    }
 });
